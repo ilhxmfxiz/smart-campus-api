@@ -1,5 +1,6 @@
 package com.smartcampus.resource;
 
+import com.smartcampus.exception.RoomNotEmptyException;
 import com.smartcampus.model.Room;
 import com.smartcampus.repository.InMemoryStore;
 
@@ -70,12 +71,12 @@ public class RoomResource {
         }
 
         if (room.getSensorIds() != null && !room.getSensorIds().isEmpty()) {
-            return Response.status(Response.Status.BAD_REQUEST)
-                    .entity("Room cannot be deleted because it still has assigned sensors.")
-                    .build();
+            throw new RoomNotEmptyException(
+                    "Room cannot be deleted because it still contains assigned sensors."
+            );
         }
 
         InMemoryStore.rooms.remove(roomId);
-        return Response.ok("Room deleted successfully.").build();
+        return Response.ok("{\"message\":\"Room deleted successfully.\"}").build();
     }
 }
